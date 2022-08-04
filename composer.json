@@ -1,0 +1,23 @@
+{
+    "name": "minh.truong/bug_report_app",
+    "authors": [
+        {
+            "name": "s3minhtruong",
+            "email": "minh.truong@s3corp.com.vn"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "MinhTruong\\BugReportApp\\": "Src/"
+        }
+    },
+
+    "autoload-dev": {
+        "psr-4": {
+            "MinhTruong\\BugReportApp\\": "Tests/"
+        }
+    },
+    "require": {
+        "phpunit/phpunit": "^9.5"
+    }
+}
