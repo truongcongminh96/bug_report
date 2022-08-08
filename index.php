@@ -2,11 +2,11 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '\vendor\autoload.php';
+require_once __DIR__ . '/Src/Exception/exception.php';
 
-set_exception_handler([new App\Exception\ExceptionHandler(), 'handler']);
-$config = \App\Helpers\Config::getFileContent('notfoundfile');
-var_dump($config);
 
+$db = new mysqli('127.0.0.1', 'root', '', 'bug');
+exit;
 $application = new \App\Helpers\App();
 echo $application->getServerTime()->format('Y-m-d H:i:s') . PHP_EOL;
 echo $application->getLogPath() . PHP_EOL;

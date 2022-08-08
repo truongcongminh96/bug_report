@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace App\Exception;
 
@@ -21,5 +21,10 @@ class ExceptionHandler
         }
 
         exit;
+    }
+
+    public function convertWarningsAndNoticesException($severity, $message, $file, $line)
+    {
+        throw new \ErrorException($severity, $message, $file, $line);
     }
 }
