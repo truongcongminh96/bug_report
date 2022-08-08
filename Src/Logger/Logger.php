@@ -5,7 +5,7 @@ namespace App\Logger;
 
 
 use App\Contracts\LoggerInterface;
-use App\Exception\InvalidLogLevelAgrument;
+use App\Exception\InvalidLogLevelArgument;
 use App\Helpers\App;
 use ReflectionClass;
 
@@ -56,8 +56,8 @@ class Logger implements LoggerInterface
     {
         $object = new ReflectionClass(LogLevel::class);
         $validLogLevelsArray = $object->getConstants();
-        if (!in_array($level, $validLogLevelsArray)) {
-            throw new InvalidLogLevelAgrument($validLogLevelsArray);
+        if(!in_array($level, $validLogLevelsArray)){
+            throw new InvalidLogLevelArgument($level, $validLogLevelsArray);
         }
         $this->addRecord($level, $message, $context);
     }
@@ -70,9 +70,9 @@ class Logger implements LoggerInterface
         $env = $application->getEnvironment();
         $details = sprintf(
                 "%s - Level: %s - Message: %s - Context: %s", $date, $level, $message, json_encode($context)
-            ) . PHP_EOL;
+            ).PHP_EOL;
 
-        $fileName = sprintf("%s/%s-%s.log", $logPath, $env, $date("j.n.Y"));
+        $fileName = sprintf("%s/%s-%s.log", $logPath, $env, date("j.n.Y"));
         file_put_contents($fileName, $details, FILE_APPEND);
     }
 }

@@ -1,0 +1,2 @@
+2022-08-08 15:24:28 - Level: emergency - Message: There is an emergency - Context: {"exception":"exception occured"}
+2022-08-08 15:24:28 - Level: info - Message: user created successfully - Context: {"id":1}
