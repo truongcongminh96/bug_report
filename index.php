@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '\vendor\autoload.php';
-require_once __DIR__ . '/Src/Exception/exception.php';
+require_once __DIR__ . '\Src\Exception\exception.php';
 
 
 $db = new mysqli('127.0.0.1', 'root', '', 'bug');
