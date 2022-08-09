@@ -1,0 +1,2 @@
+2019-03-30 14:37:08 - Level: emergency - Message There is an emergency - Context: {"exception":"excetion occured"}
+2019-03-30 14:37:08 - Level: info - Message User account created successfully - Context: {"id":5}

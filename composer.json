@@ -1,7 +1,8 @@
 {
   "name": "minhtuong/bug-report-app",
   "require": {
-    "ext-mysqli": "*"
+    "ext-mysqli": "*",
+    "ext-pdo": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "^9"

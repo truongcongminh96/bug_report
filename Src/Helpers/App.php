@@ -7,7 +7,6 @@ namespace App\Helpers;
 
 use JetBrains\PhpStorm\Pure;
 use DateTimeInterface, DateTime, DateTimeZone;
-use mysql_xdevapi\Exception;
 
 class App
 {
@@ -15,7 +14,7 @@ class App
 
     public function __construct()
     {
-        $this->config = Config::getFileContent('app');
+        $this->config = Config::get('app');
     }
 
     public function isDebugMode(): bool
