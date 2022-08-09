@@ -33,7 +33,7 @@ class App
             return 'production';
         }
 
-        return $this->config['env'];
+        return $this->isTestMode() ? 'test' : $this->config['env'];
     }
 
     public function getLogPath(): string
@@ -76,5 +76,14 @@ class App
                 sprintf('Error: %s', $exception->getMessage())
             );
         }
+    }
+
+    #[Pure] public function isTestMode(): bool
+    {
+        if ($this->isRunningFromConsole() && defined('PHPUNIT_RUNNING') && PHPUNIT_RUNNING == true) {
+            return true;
+        }
+
+        return false;
     }
 }

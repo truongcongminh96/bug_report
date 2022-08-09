@@ -17,5 +17,7 @@
         </testsuite>
     </testsuites>
 
-
+    <php>
+        <const name="PHPUNIT_RUNNING" value="true"/>
+    </php>
 </phpunit>
