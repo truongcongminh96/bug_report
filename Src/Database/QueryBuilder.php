@@ -86,12 +86,19 @@ abstract class QueryBuilder
 
     public function update(array $data)
     {
+        $this->fields = [];
+        $this->operations = self::DML_TYPE_UPDATE;
+        foreach ($data as $column => $value) {
+            $this->fields[] = sprintf('%s%s%s', $column, self::OPERATORS[0], "'$value'");
+        }
 
+        return $this;
     }
 
     public function delete()
     {
-
+        $this->operations = self::DML_TYPE_DELETE;
+        return $this;
     }
 
     public function raw($query)
