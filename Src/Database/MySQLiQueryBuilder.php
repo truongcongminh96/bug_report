@@ -34,7 +34,7 @@ class MySQLiQueryBuilder extends QueryBuilder
         return $this->resultSet ? $this->resultSet->num_row() : false;
     }
 
-    public function lastInsertedId()
+    public function lastInsertId()
     {
         return $this->connection->insert_id;
     }

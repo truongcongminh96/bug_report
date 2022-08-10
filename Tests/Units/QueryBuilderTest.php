@@ -5,6 +5,7 @@ namespace Tests\Units;
 
 
 use App\Database\PDOConnection;
+use App\Database\PDOQueryBuilder;
 use App\Database\QueryBuilder;
 use App\Helpers\Config;
 use PHPUnit\Framework\TestCase;
@@ -16,8 +17,12 @@ class QueryBuilderTest extends TestCase
 
     public function setUp(): void
     {
-        $pdo = new PDOConnection(Config::get('database', 'pdo'));
-        $this->queryBuilder = new QueryBuilder(
+        $credentials = array_merge(Config::get('database', 'pdo'),
+            ['db_name' => 'bug_app_testing']
+        );
+        $pdo = new PDOConnection($credentials);
+
+        $this->queryBuilder = new PDOQueryBuilder(
             $pdo->connect()
         );
         parent::setUp();
@@ -25,13 +30,20 @@ class QueryBuilderTest extends TestCase
 
     public function testItCanCreateRecords()
     {
+        $data = [
+            'report_type' => 'Report Type 1',
+            'message' => 'This is a dummy message',
+            'link' => 'https://link.com',
+            'email' => 'minh.truong@s3corp.com.vn',
+            'created_at' => date('Y-m-d H:i:s')
+        ];
         $id = $this->queryBuilder->table('reports')->create($data);
         self::assertNotNull($id);
     }
 
     public function testInCanPerformRawQuery()
     {
-        $result = $this->queryBuilder->raw("SELECT * FROM reports;");
+        $result = $this->queryBuilder->raw("SELECT * FROM reports;")->get();
         self::assertNotNull($result);
     }
 
@@ -40,10 +52,9 @@ class QueryBuilderTest extends TestCase
         $result = $this->queryBuilder
             ->table('reports')
             ->select('*')
-            ->where('id', 1);
+            ->where('id', 1)
+            ->first();
 
-        var_dump($result->query);
-        exit;
         self::assertNotNull($result);
         self::assertSame(1, (int)$result->id);
     }

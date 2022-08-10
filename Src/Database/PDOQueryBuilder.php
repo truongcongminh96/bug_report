@@ -19,9 +19,9 @@ class PDOQueryBuilder extends QueryBuilder
         return $this->statement->rowCount();
     }
 
-    public function lastInsertedId()
+    public function lastInsertId()
     {
-        return $this->connection->lastInsertedId();
+        return $this->connection->lastInsertId();
     }
 
     public function prepare($query)
@@ -31,7 +31,7 @@ class PDOQueryBuilder extends QueryBuilder
 
     public function execute($statement)
     {
-        $statement->excute($this->bindings);
+        $statement->execute($this->bindings);
         $this->bindings = [];
         $this->placeholders = [];
 

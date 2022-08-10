@@ -49,7 +49,7 @@ abstract class QueryBuilder
             }
         }
         $this->parseWhere([$column => $value], $operator);
-        $query = $this->prepare(getQuery($this->operation));
+        $query = $this->prepare($this->getQuery($this->operation));
         $this->statement = $this->execute($query);
         return $this;
     }
@@ -72,7 +72,16 @@ abstract class QueryBuilder
 
     public function create(array $data)
     {
+        $this->fields = '`' . implode('`, `', array_keys($data)) . '`';
+        foreach ($data as $value) {
+            $this->placeholders[] = self::PLACEHOLDER;
+            $this->bindings[] = $value;
+        }
 
+        $query = $this->prepare($this->getQuery(self::DML_TYPE_INSERT));
+        $this->statement = $this->execute($query);
+
+        return $this->lastInsertId();
     }
 
     public function update(array $data)
@@ -87,29 +96,31 @@ abstract class QueryBuilder
 
     public function raw($query)
     {
-
+        $query = $this->prepare($query);
+        $this->statement = $this->execute($query);
+        return $this;
     }
 
     public function find($id)
     {
-
+        return $this->where('id', $id)->first();
     }
 
     public function findOneBy(string $field, $value)
     {
-
+        return $this->where($field, $value)->first();
     }
 
     public function first()
     {
-
+        return $this->count() ? $this->get()[0] : "";
     }
 
     abstract public function get();
 
     abstract public function count();
 
-    abstract public function lastInsertedId();
+    abstract public function lastInsertId();
 
     abstract public function prepare($query);
 
