@@ -4,15 +4,22 @@
 namespace Tests\Units;
 
 
+use App\Database\PDOConnection;
+use App\Database\QueryBuilder;
+use App\Helpers\Config;
 use PHPUnit\Framework\TestCase;
 
 class QueryBuilderTest extends TestCase
 {
+    /** @var QueryBuilder $queryBuilder */
     private $queryBuilder;
 
     public function setUp(): void
     {
-        $this->queryBuilder = new QueryBuilder();
+        $pdo = new PDOConnection(Config::get('database', 'pdo'));
+        $this->queryBuilder = new QueryBuilder(
+            $pdo->connect()
+        );
         parent::setUp();
     }
 
@@ -33,9 +40,10 @@ class QueryBuilderTest extends TestCase
         $result = $this->queryBuilder
             ->table('reports')
             ->select('*')
-            ->where('id', 1)
-            ->first();
+            ->where('id', 1);
 
+        var_dump($result->query);
+        exit;
         self::assertNotNull($result);
         self::assertSame(1, (int)$result->id);
     }
