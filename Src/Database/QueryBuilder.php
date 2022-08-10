@@ -7,7 +7,7 @@ namespace App\Database;
 use App\Contracts\DatabaseConnectionInterface;
 use App\Exception\InvalidArgumentException;
 
-class QueryBuilder
+abstract class QueryBuilder
 {
     protected $connection; //pdo or mysqli
     protected $table;
@@ -16,7 +16,6 @@ class QueryBuilder
     protected $placeholders;
     protected $bindings; //name = ? ['terry']
     protected $operation = self::DML_TYPE_SELECT; //dml - SELECT, UPDATE, INSERT, DELETE
-    public $query;
 
     const OPERATORS = ['=', '>=', '>', '<=', '<', '<>'];
     const PLACEHOLDER = '?';
@@ -50,7 +49,8 @@ class QueryBuilder
             }
         }
         $this->parseWhere([$column => $value], $operator);
-        $this->query = $this->getQuery($this->operation);
+        $query = $this->prepare(getQuery($this->operation));
+        $this->statement = $this->execute($query);
         return $this;
     }
 
@@ -70,20 +70,50 @@ class QueryBuilder
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getPlaceholders()
+    public function create(array $data)
     {
-        return $this->placeholders;
+
     }
 
-    /**
-     * @return mixed
-     */
-    public function getBindings()
+    public function update(array $data)
     {
-        return $this->bindings;
+
     }
 
+    public function delete()
+    {
+
+    }
+
+    public function raw($query)
+    {
+
+    }
+
+    public function find($id)
+    {
+
+    }
+
+    public function findOneBy(string $field, $value)
+    {
+
+    }
+
+    public function first()
+    {
+
+    }
+
+    abstract public function get();
+
+    abstract public function count();
+
+    abstract public function lastInsertedId();
+
+    abstract public function prepare($query);
+
+    abstract public function execute($statement);
+
+    abstract public function fetchInto($className);
 }
