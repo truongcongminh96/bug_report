@@ -20,11 +20,12 @@ class MySQLiQueryBuilder extends QueryBuilder
         $results = [];
         if (!$this->resultSet) {
             $this->resultSet = $this->statement->get_result();
-
-            while ($object = $this->resultSet->fetch_object()) {
-                $results[] = $object;
+            if ($this->resultSet) {
+                while ($object = $this->resultSet->fetch_object()) {
+                    $results[] = $object;
+                }
+                $this->results = $results;
             }
-            $this->results = $results;
         }
 
         return $this->results;
@@ -113,5 +114,16 @@ class MySQLiQueryBuilder extends QueryBuilder
         }
 
         return $this->results = $results;
+    }
+
+    public function beginTransaction()
+    {
+        $this->connection->begin_transaction();
+    }
+
+    public function affected()
+    {
+        $this->statement->store_result();
+        return $this->statement->affected_rows;
     }
 }

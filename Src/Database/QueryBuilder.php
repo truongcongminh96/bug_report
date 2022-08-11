@@ -49,8 +49,6 @@ abstract class QueryBuilder
             }
         }
         $this->parseWhere([$column => $value], $operator);
-        $query = $this->prepare($this->getQuery($this->operation));
-        $this->statement = $this->execute($query);
         return $this;
     }
 
@@ -110,12 +108,12 @@ abstract class QueryBuilder
 
     public function find($id)
     {
-        return $this->where('id', $id)->first();
+        return $this->where('id', $id)->runQuery()->first();
     }
 
     public function findOneBy(string $field, $value)
     {
-        return $this->where($field, $value)->first();
+        return $this->where($field, $value)->runQuery()->first();
     }
 
     public function first()
@@ -123,12 +121,16 @@ abstract class QueryBuilder
         return $this->count() ? $this->get()[0] : NULL;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getConnection()
+    public function rollback(): void
     {
-        return $this->connection;
+        $this->connection->rollback();
+    }
+
+    public function runQuery()
+    {
+        $query = $this->prepare($this->getQuery($this->operation));
+        $this->statement = $this->execute($query);
+        return $this;
     }
 
     abstract public function get();
@@ -142,4 +144,8 @@ abstract class QueryBuilder
     abstract public function execute($statement);
 
     abstract public function fetchInto($className);
+
+    abstract public function beginTransaction();
+
+    abstract public function affected();
 }
