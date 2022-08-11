@@ -5,6 +5,7 @@ namespace App\Exception;
 
 
 use App\Helpers\App;
+use ErrorException;
 use JetBrains\PhpStorm\NoReturn;
 use Throwable;
 
@@ -25,6 +26,6 @@ class ExceptionHandler
 
     public function convertWarningsAndNoticesException($severity, $message, $file, $line)
     {
-        throw new \ErrorException($severity, $message, $file, $line);
+        throw new ErrorException($severity, $message, $file, $line);
     }
 }

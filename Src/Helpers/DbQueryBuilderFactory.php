@@ -10,6 +10,7 @@ use App\Database\PDOConnection;
 use App\Database\PDOQueryBuilder;
 use App\Database\QueryBuilder;
 use App\Exception\DatabaseConnectionException;
+use App\Exception\NotFoundException;
 
 class DbQueryBuilderFactory
 {
@@ -20,7 +21,11 @@ class DbQueryBuilderFactory
     ): QueryBuilder
     {
         $connection = null;
-        $credentials = array_merge(Config::get($credentialsFile, $connectionType), $options);
+        try {
+            $credentials = array_merge(Config::get($credentialsFile, $connectionType), $options);
+        } catch (NotFoundException $exception) {
+            throw new NotFoundException(sprintf($exception->getMessage()));
+        }
 
         switch ($connectionType) {
             case 'pdo':

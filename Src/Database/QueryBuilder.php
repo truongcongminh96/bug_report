@@ -6,16 +6,22 @@ namespace App\Database;
 
 use App\Contracts\DatabaseConnectionInterface;
 use App\Exception\InvalidArgumentException;
+use mysqli;
+use mysqli_stmt;
+use PDO;
+use PDOStatement;
 
 abstract class QueryBuilder
 {
-    protected $connection; //pdo or mysqli
-    protected $table;
-    protected $statement;
-    protected $fields;
-    protected $placeholders;
-    protected $bindings; //name = ? ['terry']
-    protected $operation = self::DML_TYPE_SELECT; //dml - SELECT, UPDATE, INSERT, DELETE
+
+    //mysqli_stmt
+    protected PDO|mysqli $connection; //pdo or mysqli
+    protected string $table;
+    protected PDOStatement|mysqli_stmt $statement;
+    protected string|array $fields;
+    protected array $placeholders;
+    protected array $bindings;
+    protected array|string $operation = self::DML_TYPE_SELECT; //dml - SELECT, UPDATE, INSERT, DELETE
 
     const OPERATORS = ['=', '>=', '>', '<=', '<', '<>'];
     const PLACEHOLDER = '?';
@@ -32,13 +38,13 @@ abstract class QueryBuilder
         $this->connection = $databaseConnection->getConnection();
     }
 
-    public function table($table)
+    public function table(string $table): static
     {
         $this->table = $table;
         return $this;
     }
 
-    public function where($column, $operator = self::OPERATORS[0], $value = null)
+    public function where($column, $operator = self::OPERATORS[0], $value = null): static
     {
         if (!in_array($operator, self::OPERATORS)) {
             if ($value === null) {
@@ -52,7 +58,7 @@ abstract class QueryBuilder
         return $this;
     }
 
-    private function parseWhere(array $conditions, string $operator)
+    private function parseWhere(array $conditions, string $operator): static
     {
         foreach ($conditions as $column => $value) {
             $this->placeholders[] = sprintf('%s %s %s', $column, $operator, self::PLACEHOLDER);
@@ -61,7 +67,7 @@ abstract class QueryBuilder
         return $this;
     }
 
-    public function select(string $fields = self::COLUMNS)
+    public function select(string $fields = self::COLUMNS): static
     {
         $this->operation = self::DML_TYPE_SELECT;
         $this->fields = $fields;
@@ -76,13 +82,17 @@ abstract class QueryBuilder
             $this->bindings[] = $value;
         }
 
-        $query = $this->prepare($this->getQuery(self::DML_TYPE_INSERT));
+        try {
+            $query = $this->prepare($this->getQuery(self::DML_TYPE_INSERT));
+        } catch (InvalidArgumentException $exception) {
+            throw new InvalidArgumentException($exception->getMessage());
+        }
         $this->statement = $this->execute($query);
 
         return $this->lastInsertId();
     }
 
-    public function update(array $data)
+    public function update(array $data): static
     {
         $this->fields = [];
         $this->operation = self::DML_TYPE_UPDATE;
@@ -93,13 +103,13 @@ abstract class QueryBuilder
         return $this;
     }
 
-    public function delete()
+    public function delete(): static
     {
         $this->operation = self::DML_TYPE_DELETE;
         return $this;
     }
 
-    public function raw($query)
+    public function raw($query): static
     {
         $query = $this->prepare($query);
         $this->statement = $this->execute($query);
@@ -126,7 +136,7 @@ abstract class QueryBuilder
         $this->connection->rollback();
     }
 
-    public function runQuery()
+    public function runQuery(): static
     {
         $query = $this->prepare($this->getQuery($this->operation));
         $this->statement = $this->execute($query);

@@ -5,17 +5,24 @@ namespace App\Database;
 
 
 use App\Exception\InvalidArgumentException;
+use mysqli_result;
+use ReflectionClass;
+use ReflectionException;
 
 class MySQLiQueryBuilder extends QueryBuilder
 {
-    private $resultSet;
-    private $results;
+    /**
+     * Since PHP 7.4 introduces type-hinting for properties, it is particularly important to provide valid values for all properties, so that all properties have values that match their declared types.
+     * A property that has never been assigned doesn't have a null value, but it is on an undefined state, which will never match any declared type. undefined !== null.
+     */
+    private ?mysqli_result $resultSet = null;
+    private array $results;
 
     const PARAM_TYPE_INT = 'i';
     const PARAM_TYPE_STRING = 's';
     const PARAM_TYPE_DOUBLE = 's';
 
-    public function get()
+    public function get(): array
     {
         $results = [];
         if (!$this->resultSet) {
@@ -31,7 +38,7 @@ class MySQLiQueryBuilder extends QueryBuilder
         return $this->results;
     }
 
-    public function count()
+    public function count(): bool
     {
         if (!$this->resultSet) {
             $this->get();
@@ -58,9 +65,13 @@ class MySQLiQueryBuilder extends QueryBuilder
 
         if ($this->bindings) {
             $bindings = $this->parseBindings($this->bindings);
-            $reflectionObj = new \ReflectionClass('mysqli_stmt');
+            $reflectionObj = new ReflectionClass('mysqli_stmt');
             $method = $reflectionObj->getMethod('bind_param');
-            $method->invokeArgs($statement, $bindings);
+            try {
+                $method->invokeArgs($statement, $bindings);
+            } catch (ReflectionException $exception) {
+                throw new ReflectionException(sprintf($exception->getMessage()));
+            }
         }
 
         $statement->execute();
@@ -121,7 +132,7 @@ class MySQLiQueryBuilder extends QueryBuilder
         $this->connection->begin_transaction();
     }
 
-    public function affected()
+    public function affected(): int
     {
         $this->statement->store_result();
         return $this->statement->affected_rows;

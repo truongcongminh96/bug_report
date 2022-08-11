@@ -6,12 +6,14 @@ namespace App\Database;
 
 use App\Exception\MissingArgumentException;
 use JetBrains\PhpStorm\Pure;
+use mysqli;
+use PDO;
 
 abstract class AbstractConnection
 {
 
-    protected $connection;
-    protected $credentials;
+    protected PDO|mysqli $connection;
+    protected array $credentials;
 
     const REQUIRED_CONNECTION_KEYS = [];
 

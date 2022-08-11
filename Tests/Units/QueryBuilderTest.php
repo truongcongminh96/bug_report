@@ -4,24 +4,20 @@
 namespace Tests\Units;
 
 
-use App\Database\MySQLiConnection;
-use App\Database\MySQLiQueryBuilder;
-use App\Database\PDOConnection;
-use App\Database\PDOQueryBuilder;
 use App\Database\QueryBuilder;
-use App\Helpers\Config;
+use App\Exception\InvalidArgumentException;
 use App\Helpers\DbQueryBuilderFactory;
 use PHPUnit\Framework\TestCase;
 
 class QueryBuilderTest extends TestCase
 {
     /** @var QueryBuilder $queryBuilder */
-    private $queryBuilder;
+    private QueryBuilder $queryBuilder;
 
     public function setUp(): void
     {
         $this->queryBuilder = DbQueryBuilderFactory::make(
-            'database', 'mysqli', ['db_name' => 'bug_app_testing']
+            'database', 'pdo', ['db_name' => 'bug_app_testing']
         );
 
         $this->queryBuilder->beginTransaction();
@@ -128,8 +124,9 @@ class QueryBuilderTest extends TestCase
 
     /**
      * @return mixed
+     * @throws InvalidArgumentException
      */
-    private function insertIntoTable()
+    private function insertIntoTable(): mixed
     {
         $data = [
             'report_type' => 'Report Type 1',
@@ -138,7 +135,6 @@ class QueryBuilderTest extends TestCase
             'email' => 'minh.truong@s3corp.com.vn',
             'created_at' => date('Y-m-d H:i:s')
         ];
-        $id = $this->queryBuilder->table('reports')->create($data);
-        return $id;
+        return $this->queryBuilder->table('reports')->create($data);
     }
 }

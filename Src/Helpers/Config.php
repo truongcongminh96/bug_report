@@ -10,7 +10,11 @@ class Config
 {
     public static function get(string $fileName, string $key = null)
     {
-        $fileContent = self::getFileContent($fileName);
+        try {
+            $fileContent = self::getFileContent($fileName);
+        } catch (NotFoundException $exception) {
+            throw new NotFoundException(sprintf($exception->getMessage()));
+        }
         if ($key === null) {
             return $fileContent;
         }

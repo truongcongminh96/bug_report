@@ -4,10 +4,11 @@ declare(strict_types=1);
 namespace App\Exception;
 
 
+use Exception;
 use JetBrains\PhpStorm\Pure;
 use Throwable;
 
-abstract class BaseException extends \Exception
+abstract class BaseException extends Exception
 {
     protected array $data = [];
 

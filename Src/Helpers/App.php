@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\Helpers;
 
 
+use Exception;
 use JetBrains\PhpStorm\Pure;
 use DateTimeInterface, DateTime, DateTimeZone;
+use RuntimeException;
+use Throwable;
 
 class App
 {
@@ -38,7 +41,7 @@ class App
     public function getLogPath(): string
     {
         if (!isset($this->config['log_path'])) {
-            throw new \Exception('Log path is not defined');
+            throw new Exception('Log path is not defined');
         }
 
         return $this->config['log_path'];
@@ -70,8 +73,8 @@ class App
     {
         try {
             return new DateTime('now', new DateTimeZone('ASIA/Ho_Chi_Minh'));
-        } catch (\Throwable $exception) {
-            throw new \RuntimeException(
+        } catch (Throwable $exception) {
+            throw new RuntimeException(
                 sprintf('Error: %s', $exception->getMessage())
             );
         }
