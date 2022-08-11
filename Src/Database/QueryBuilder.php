@@ -87,7 +87,7 @@ abstract class QueryBuilder
     public function update(array $data)
     {
         $this->fields = [];
-        $this->operations = self::DML_TYPE_UPDATE;
+        $this->operation = self::DML_TYPE_UPDATE;
         foreach ($data as $column => $value) {
             $this->fields[] = sprintf('%s%s%s', $column, self::OPERATORS[0], "'$value'");
         }
@@ -97,7 +97,7 @@ abstract class QueryBuilder
 
     public function delete()
     {
-        $this->operations = self::DML_TYPE_DELETE;
+        $this->operation = self::DML_TYPE_DELETE;
         return $this;
     }
 
@@ -120,7 +120,7 @@ abstract class QueryBuilder
 
     public function first()
     {
-        return $this->count() ? $this->get()[0] : "";
+        return $this->count() ? $this->get()[0] : NULL;
     }
 
     /**
