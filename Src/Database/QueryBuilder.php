@@ -123,6 +123,14 @@ abstract class QueryBuilder
         return $this->count() ? $this->get()[0] : "";
     }
 
+    /**
+     * @return mixed
+     */
+    public function getConnection()
+    {
+        return $this->connection;
+    }
+
     abstract public function get();
 
     abstract public function count();

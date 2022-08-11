@@ -6,6 +6,7 @@ namespace App\Helpers;
 
 use App\Database\MySQLiConnection;
 use App\Database\MySQLiQueryBuilder;
+use App\Database\PDOConnection;
 use App\Database\PDOQueryBuilder;
 use App\Database\QueryBuilder;
 use App\Exception\DatabaseConnectionException;
@@ -19,7 +20,7 @@ class DbQueryBuilderFactory
     ): QueryBuilder
     {
         $connection = null;
-        $credentials = array_merge(Config::get($credentialsFile, $connectionType), $options)
+        $credentials = array_merge(Config::get($credentialsFile, $connectionType), $options);
 
         switch ($connectionType) {
             case 'pdo':
